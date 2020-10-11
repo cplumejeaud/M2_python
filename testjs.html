@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        var i = 1;
+
+        function count(){
+            i = i+1;
+            console.log(i);
+            alert('I come here '+string(i)+' times'); 
+            return i;
+        }
+
+    </script>
+<body>
+<p style="font-weight: bold;">Welcome <a href="https://cplumejeaud.github.io/M2_python/request.html">here</a></p>
+
+<p>The path of image is relative to the request.html file (in the same directory)
+</br>
+    <img src="smiley.gif" alt="next to the request.html file">
+</p>
+
+<p>-----------------------------</p>
+<p>The path of image is specified on my server serving the  request.html file
+</br>
+    <img src="https://github.com/cplumejeaud/M2_python/blob/main/smiley.gif?raw=true" alt="on my server">
+</p>
+<p>-----------------------------</p>
+<p>The path of image is specified on another Web server on the Web
+</br>
+    <img src="https://francoischarron.com/images/templates/gifs/original/gifs-sourires-emotions-zQPSV4Gaia.gif
+    " alt="elsewhere on the Web">
+</p>
+<p>-----------------------------</p>
+<button onclick="count()">Click here and see what happens</button>
+</body>
+</html>
+
