@@ -1,0 +1,72 @@
+[
+  {
+    "ogc_fid": 905,
+    "uhgs_id": "B0000276",
+    "total": 12,
+    "toponym": "Virginie",
+    "belonging_states": "[{\"1749-1783\" : \"Grande-Bretagne\"},{\"1783-1815\" : \"USA\"}]",
+    "belonging_substates": "[{\"1749-1783\" : \"colonies britanniques d'Amérique\"},{\"1783-1815\" : \"Virginie\"}]",
+    "status": null,
+    "geonameid": 4789101,
+    "admiralty": null,
+    "province": null,
+    "shiparea": null,
+    "point": "{\"type\":\"Point\",\"coordinates\":[-8469986.02885583,4416062.98675394]}"
+  },
+  {
+    "ogc_fid": 1196,
+    "uhgs_id": "A1968866",
+    "total": 1,
+    "toponym": "Gibette Torre della Civetta",
+    "belonging_states": null,
+    "belonging_substates": null,
+    "status": null,
+    "geonameid": 3171011,
+    "admiralty": null,
+    "province": null,
+    "shiparea": null,
+    "point": "{\"type\":\"Point\",\"coordinates\":[1199625.03037699,5288327.26330282]}"
+  },
+  {
+    "ogc_fid": 844,
+    "uhgs_id": "A1708033",
+    "total": 1,
+    "toponym": "Bengasy en Barbarie",
+    "belonging_states": null,
+    "belonging_substates": null,
+    "status": null,
+    "geonameid": 88319,
+    "admiralty": null,
+    "province": null,
+    "shiparea": null,
+    "point": "{\"type\":\"Point\",\"coordinates\":[2233811.15235819,3778634.74549456]}"
+  },
+  {
+    "ogc_fid": 1104,
+    "uhgs_id": "A0249318",
+    "total": 5,
+    "toponym": "Alghero",
+    "belonging_states": "[{\"1749-1815\" : \"Royaume de Piémont-Sardaigne\"}]",
+    "belonging_substates": "[{\"1749-1815\" : \"Sardaigne\"}]",
+    "status": null,
+    "geonameid": 3183284,
+    "admiralty": null,
+    "province": null,
+    "shiparea": "MED-SARS",
+    "point": "{\"type\":\"Point\",\"coordinates\":[925961.758309933,4947494.00769854]}"
+  },
+  {
+    "ogc_fid": 1075,
+    "uhgs_id": "A0224225",
+    "total": 6,
+    "toponym": "Ile Rousse en Sardaigne",
+    "belonging_states": "[{\"1749-1815\" : \"Royaume de Piémont-Sardaigne\"}]",
+    "belonging_substates": "[{\"1749-1815\" : \"Sardaigne\"}]",
+    "status": null,
+    "geonameid": 3168923,
+    "admiralty": null,
+    "province": null,
+    "shiparea": "MED-SARS",
+    "point": "{\"type\":\"Point\",\"coordinates\":[987032.855473524,5014800.35345527]}"
+  }
+]
