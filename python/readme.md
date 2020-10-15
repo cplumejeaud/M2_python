@@ -1,5 +1,10 @@
 # python things
 
+To configure : 
+```sh
+pip install -r requirements.txt
+```
+
 ## First python server with Flask
 
 0. flask_mini.py
