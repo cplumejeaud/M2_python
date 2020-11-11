@@ -1,4 +1,4 @@
-# SQL, R and Python code for this project
+# SQL and Python code for this project
 
 ## Read and plot
 
