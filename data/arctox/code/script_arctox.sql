@@ -578,3 +578,119 @@ alter table arctic.spatial_cluster add concave_hull geometry
 update arctic.spatial_cluster set concave_hull = ST_ConcaveHull(cluster_geom, 0.80) where cid is not null
 update arctic.spatial_cluster set concave_hull = ST_ConvexHull(cluster_geom) where cid is not null
 
+------------------------------------------------------------------
+
+-- Fix the distance to colony
+update kap_hoegh_gls set distance_to_colony = st_distance(pointgps, s.point_loc, true) / 1000
+from sites s 
+where s.sampling_site = 'Kap_Hoegh'
+
+select *, st_x(point3857) as x, st_y(point3857) as y from arctic.kap_hoegh_gls
+update arctic.kap_hoegh_gls g set smoothlat=20490.000000 where g.pkid =52
+alter table arctic.kap_hoegh_gls add column if not exists smoothlat float
+alter table arctic.kap_hoegh_gls drop column smoothlat
+
+------------------------------------------------------------------
+-- import coastline
+------------------------------------------------------------------
+
+export PGCLIENTENCODING=utf8
+ogr2ogr -f "PostgreSQL" PG:"host=localhost port=8005 user=postgres dbname=savoie password=xxxxx schemas=arctic" C:\Travail\CNRS_mycore\Cours\Cours_M2_python\Projet_Arctox\trait_cote_monde_gshhs_i_L1_4326_minified2dec.geojson -a_srs EPSG:4326 -nln shoreline
+
+select id, st_srid(wkb_geometry), st_area(wkb_geometry, true) 
+from arctic.shoreline
+where id = '7'
+2113539963215.1765
+
+-- Filter the set of shoreline you will use to compute the distance of birds to shoreline
+alter table arctic.shoreline add column if not exists  keep boolean default false;
+update arctic.shoreline set keep = true where st_area(wkb_geometry, true) > 1000000000
+-- 293 entities
+
+select count(*) from arctic.shoreline
+-- 32 830
+
+-- Add a projected new geom3857 using Mercator EPSG 3857 projection. 
+-- This will allow for computing an euclidian distance which is less computive intensive
+
+alter table arctic.shoreline add column if not exists  geom3857 geometry
+update arctic.shoreline set geom3857 = st_setsrid(st_transform(wkb_geometry, 3857), 3857)
+ 
+-- compute projecte area : not the same as in 4326 (due to a bad projection choice)
+select id, st_srid(geom3857), st_area(geom3857) 
+from arctic.shoreline
+where id = '7'
+34549486938499.723
+
+
+------------------------------------------------------------------
+-- compute distance to shoreline for each bird each time and record it into kap_hoegh_gls
+------------------------------------------------------------------
+
+-- Distance of all points to all shorelines
+select pkid, st_distance(geom3857,point3857) as d
+from arctic.shoreline , arctic.kap_hoegh_gls
+where keep is true ;
+
+
+-- Minimal distance per pkid (a point at a time of a bird) to all shorelines
+select pkid, min(d) from 
+(
+	select pkid, st_distance(geom3857,point3857) as d
+	from arctic.shoreline , arctic.kap_hoegh_gls g
+	where keep is true and g.id = '148' 
+) as k
+group by pkid ;
+
+-- store them in arctic.kap_hoegh_gls
+
+alter table arctic.kap_hoegh_gls add column if not exists shoreline_distance float;
+
+update arctic.kap_hoegh_gls g set shoreline_distance = mind
+from
+(
+	select pkid, min(d) as mind from 
+	(
+		select pkid, st_distance(geom3857,point3857) as d
+		from arctic.shoreline , arctic.kap_hoegh_gls g
+		where keep is true and g.id = '148' 
+	) as k
+	group by pkid 
+) as q
+where g.id = '148' and q.pkid = g.pkid;
+
+----------------------------------------------------------------------------------
+-- analyse the distance (farthest, mean, median) and store in arctic.data_for_analyses
+----------------------------------------------------------------------------------
+
+alter table arctic.data_for_analyses add column if not exists max_shoreline_distance float;
+update arctic.data_for_analyses d set max_shoreline_distance = round(maxd / 1000)
+from
+(
+	select id, max(shoreline_distance) as maxd  
+	from  arctic.kap_hoegh_gls g
+	group by id 
+) as q
+where  q.id = d.clean_glsid ;
+-- 499 points
+
+select bird_id, clean_glsid, migration_length, max_shoreline_distance 
+from arctic.data_for_analyses
+where max_shoreline_distance is not null
+-- 2182 km
+-- LIAK11EG12	148	49560.0	2182.0
+
+alter table arctic.data_for_analyses add column if not exists mean_shoreline_distance float;
+update arctic.data_for_analyses d set mean_shoreline_distance = round(avgd / 1000)
+from
+(
+	select id, avg(shoreline_distance) as avgd  
+	from  arctic.kap_hoegh_gls g
+	group by id 
+) as q
+where  q.id = d.clean_glsid ;
+
+
+select bird_id, clean_glsid, migration_length, max_shoreline_distance, mean_shoreline_distance 
+from arctic.data_for_analyses
+where max_shoreline_distance is not null
