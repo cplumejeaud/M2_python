@@ -537,6 +537,7 @@ where k.id = d.clean_glsid;
 -- https://postgis.net/docs/ST_ClusterDBSCAN.html
 -------------------
 drop table arctic.spatial_cluster
+
 create table arctic.spatial_cluster as (
 	SELECT cid, ST_Collect(pointgps) AS cluster_geom, array_agg(pkid) AS pkids_in_cluster 
 	FROM (
@@ -544,6 +545,7 @@ create table arctic.spatial_cluster as (
 	    FROM arctic.kap_hoegh_gls) sq
 	GROUP BY cid
 )
+-- 31 clusters
 
 select * from arctic.spatial_cluster
 
@@ -567,7 +569,7 @@ select avg(c), min(c), max(c), stddev(c)
 from (
 	select id, count(cid) as c from arctic.spatial_cluster group by id 
 ) as k
--- 7 classes, plus ou moins 2
+-- 7 classes, plus ou moins 2 clusters
 
 ------------------------------------------------------------------
 -- Draw their footprint
@@ -577,6 +579,48 @@ from (
 alter table arctic.spatial_cluster add concave_hull geometry
 update arctic.spatial_cluster set concave_hull = ST_ConcaveHull(cluster_geom, 0.80) where cid is not null
 update arctic.spatial_cluster set concave_hull = ST_ConvexHull(cluster_geom) where cid is not null
+
+select c.cid, g.timestampgps 
+from  arctic.spatial_cluster c, arctic.kap_hoegh_gls g  
+where g.pkid = ANY  (c.pkids_in_cluster)
+order by cid
+-- group by c.cid
+
+select c.id, c.cid, min(g.timestampgps) as mint, max(g.timestampgps)  as maxt, max(g.timestampgps)-min(g.timestampgps)  as duration
+from  arctic.spatial_cluster c, arctic.kap_hoegh_gls g  
+where g.pkid = ANY  (c.pkids_in_cluster) and c.id = '148'
+group by c.id, cid
+order by c.id, mint, maxt
+
+select distinct id, cid from arctic.spatial_cluster
+
+alter table arctic.spatial_cluster add duration int;
+alter table arctic.spatial_cluster drop  duration
+
+update arctic.spatial_cluster s set duration = k.duration
+from 
+(
+	select c.id, c.cid, min(g.timestampgps) as mint, max(g.timestampgps)  as maxt, 
+	extract (day from (max(g.timestampgps)-min(g.timestampgps)))  as duration
+	from  arctic.spatial_cluster c, arctic.kap_hoegh_gls g  
+	where g.pkid = ANY  (c.pkids_in_cluster) 
+	group by c.id, cid
+	order by c.id, mint, maxt
+) as k
+where s.id = k.id and s.cid = k.cid and s.cid is not null
+--22s
+
+select c.id, c.cid, c.duration, g.pkid, g.smooth_lat , g.smooth_long , g.timestampgps 
+from 
+	(select c.id, max(duration) as m
+	from arctic.spatial_cluster c 
+	where duration is not null
+	group by c.id) as  k , 
+	arctic.spatial_cluster c,
+	arctic.kap_hoegh_gls g  
+	where c.id = k.id and c.duration = k.m and g.pkid = ANY  (c.pkids_in_cluster) 
+
+
 
 ------------------------------------------------------------------
 
