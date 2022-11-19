@@ -20,5 +20,5 @@ Project is about how to visualize the GDR level data of any track selected by th
 Here are few ideas from Nushrat (2022).
 
 <!-- ![The main view](https://github.com/cplumejeaud/M2_python/raw/main/data/jason3/Project%20Idea.png  The main view) -->
-<img src="Project Idea.png.png" alt="The main view"  class="wrap align-right" width="50%"/>
+<img src="Project Idea.png" alt="The main view"  class="wrap align-right" width="50%"/>
 
