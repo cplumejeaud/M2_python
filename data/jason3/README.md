@@ -18,6 +18,7 @@ We have several variables (distance to coast, altitude, angel of approach etc.) 
 Project is about how to visualize the GDR level data of any track selected by the user
 
 Here are few ideas from Nushrat (2022).
-![image](./Project Idea.png)
+
+![The main view]("Project Idea.png"  The main view)
 
 
