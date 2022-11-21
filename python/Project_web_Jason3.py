@@ -31,7 +31,7 @@ _last_lat = 0
 
 def request_and_save(trackid):
     #Create a query to seek after the data
-    engine = create_engine('postgresql://postgres:lys79@localhost:8007/jason3')
+    engine = create_engine('postgresql://postgres:xxxx@localhost:8007/jason3')
     # write a query that retrieve the x and y positions of points in 3857 EPSG
     query = """select longitude,latitude,time,altitude from trackdata where trackid  = '""" +trackid+"'"
     
