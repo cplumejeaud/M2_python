@@ -93,7 +93,7 @@ def viz_ajax():
     
     # pass the div and script to render_template    
     return jsonify(
-        html_plot=render_template('update_figure.html', msg=m.get_root()._repr_html_())
+        html_plot=render_template('update_map.html', msg=m.get_root()._repr_html_())
     )
 
 
