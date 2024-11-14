@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Portrait de la Nouvelle Aquitaine</title>
+  </head>
+  <body>
+    <h1> Avec l'API portic </h1>
+    <h2> Choisir une variable</h2>
+    <form action="/map_template_form" method="get">
+        <select name="variable" id="var-select">
+            choose a variable amongst the available list
+            <option value="">--Please choose a state to filter on--</option>
+            <option value="bidon">bidon</option>
+            {{ opt|indent(4)|safe }}
+        </select>
+        <button type="submit">Refresh map</button>
+    </form>
+
+    <!--
+    <form action="/map_template_form" method="get">
+        <select name="pays">
+            {% for country in unique_countries %}
+                <option value="{{ country }}">{{ country }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Voir la carte</button>
+    </form>
+    -->
+
+    <h2> La carte </h2>
+    <div id="carte">
+    {{ msg | safe }}
+    </div>
+
+    
+    
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- 
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    -->
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+          $('#var-select').change(function(event){
+              event.preventDefault();
+              console.log($("#var-select").val());
+              alert('autre variable');
+              $.getJSON('/updatemap', {
+                  variable: $("#var-select").val(),
+                  }, function(data) {
+                      $('#carte').html(data.html_plot);
+              });
+              return false;
+          });
+        });
+
+        $(document).ready(function() {
+          $('#admiralty-select').change(function(event){
+              event.preventDefault();
+              console.log($("#admiralty-select").val());
+              console.log('Is it OK?');
+              //alert('changement amirauté');
+              
+              $.getJSON('/update_graphic', {
+                  admiralty: $("#admiralty-select").val(),
+                  }, function(data) {
+                      $('#plot_content').html(data.html_plot);
+              });
+              
+              return false;
+          });
+        });
+      </script>
+
+  </body>
+</html>
+
