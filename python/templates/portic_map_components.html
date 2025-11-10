@@ -1,0 +1,20 @@
+ <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Map template with a map</title>
+        {{ headermap|safe }}
+    </head>
+    <body>
+        <h1>Avec l'API portic</h1>
+        <h2> La carte </h2>
+            {{ bodymap|safe }}
+        <h2> Les données </h2>
+            {{ y | safe }}
+        <script>
+            {{ scriptmap|safe }}
+        </script>
+    </body>
+    
+</html>
