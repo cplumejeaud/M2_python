@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Arctox webapp made with Master M2 (Web and Geographic information)</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+      h1 {
+        margin: 2em 0 0 0;
+        color: #2e484c;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.4em;
+        text-transform: uppercase;
+      }
+      p {
+        font: "Libre Baskerville", sans-serif;
+        text-align: justify;
+        text-justify: inter-word;
+      }
+    </style>
+  </head>
+  <body>
+      <div class="container">
+      <h1>Arctox webapp to explore drivers of contaminants for mergules</h1>
+      <p>Work done with students of the Master M2 of La Rochelle University (Environmental Data to Information)</p>
+      <p>Learn more on <a href="https://arctox.cnrs.fr/"> ARCTOX web site</a> and with this paper : 
+        <a href="https://doi.org/10.1021/es504045g">Fort, Jérôme, Gregory J. Robertson, David Grémillet, Gwendoline Traisnel et Paco Bustamante. 2014. « Spatial Ecotoxicology: Migratory Arctic Seabirds Are Exposed to Mercury Contamination While Overwintering in the Northwest Atlantic ». Environmental Science & Technology 48 (19) : 11560-11567 </a>
+      </p>
+      <form>
+        <select name="variable" id="var-select">
+            Choose a variable to analyse with the Mercury in head feather amongst the available list
+            <option value="">--Please choose a variable to study with the Mercury in head feather --</option>
+            <option value="vol_egg">Egg volume</option>
+            <option value="migration_length">Length of migration (km)</option>
+            <!-- <option value="max_shoreline_distance">Maximal distance to any shoreline (km)</option>
+            <option value="mean_shoreline_distance">Mean distance to any shoreline (km)</option>
+            <option value="wintering_area_km2">Surface of wintering area (km2)</option> -->
+        </select>
+      </form>
+        <div class="row"><!-- first row -->
+          <div class="col-md-6">
+            <h2>The map showing the path of one bird</h2>
+            <div id="plot_content">
+              {{ plot_script|indent(4)|safe }}
+              {{ plot_div|indent(4)|safe }}
+            </div>
+            
+          </div>
+          <div class="col-md-6">    
+            <h2>The scatter plot to look for correlations</h2>
+            
+            <div id="scatterplot_content">
+              {{ scatterplot_script|indent(4)|safe }}
+              {{ scatterplot_div|indent(4)|safe }}
+            </div>
+          </div>
+        </div><!-- end of first row -->
+        <div class="row"><!-- third row -->
+          <h2>The whole set of data</h2>
+          <div>You can select a bird and see its corresponding migration path on the map</div>
+          <div id="arctox_data_table">
+              {{ table_div|indent(4)|safe }}
+              {{ table_script|indent(4)|safe }}
+          </div>
+          <p> Some data with null hf_bf data have been dropped out from the table</p>
+          
+            
+            
+        </div><!-- end of third row -->
+        <div class="row"><!-- second row -->
+          <div class="col-md-6">
+            <h2>The boxplot to look for differences between males and females</h2>
+          
+            <div id="boxplot_content">
+              {{ boxplot_script|indent(4)|safe }}
+              {{ boxplot_div|indent(4)|safe }}
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <h2>The histogram to look for variable distribution (of your choice)</h2>
+            
+            <div id="histplot_content">
+              {{ histplot_script|indent(4)|safe }}
+              {{ histplot_div|indent(4)|safe }}
+            </div>
+          </div>
+        </div><!-- end of second row -->
+      
+        
+  </div><!-- end of the container -->
+    
+    
+   <!-- SCRIPTS section at the end of the HTML file -->
+      {{ js_resources|indent(4)|safe }}
+      {{ css_resources|indent(4)|safe }}
+    
+    <script type="text/javascript" src="static/dataframe.min.js"></script>  
+    <script type="text/javascript" src="https://gmousse.github.io/dataframe-js/dist/dataframe.min.js"></script>
+    <script type="text/javascript" src="static/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="static/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+          $('#var-select').change(function(event){
+              event.preventDefault();
+              console.log($("#var-select").val());
+              $.getJSON('/ajaxplot', {
+                  varname: $("#var-select").val(),
+                  }, function(data) {
+                      $('#histplot_content').html(data.hist_plot);
+                      $('#scatterplot_content').html(data.scatterplot_plot);
+                      $('#boxplot_content').html(data.boxplot_plot);
+              });
+              return false;
+          });
+        });
+      </script>
+      
+  </body>
+</html>
